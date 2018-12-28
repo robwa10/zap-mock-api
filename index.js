@@ -98,11 +98,11 @@ httpsServer.listen(config.httpsPort, () => (console.log(`Listening on port ${con
 
 // Handlers
 const handlers = {
-  'sample': (data, callback) => (callback(200, {'name': 'sample handler'})),
+  'ping': (data, callback) => (callback(200)),
   'notFound': (data, callback) => (callback(404))
 };
 
 // Define a request router
 const router = {
-  'sample': handlers.sample
+  'ping': handlers.ping
 };
