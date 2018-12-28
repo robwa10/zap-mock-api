@@ -2,8 +2,10 @@
  * Primary file for the API
  *
  */
+ 'use strict';
 
 // Dependencies
+const config = require('./config');
 const http = require('http');
 const StringDecoder = require('string_decoder').StringDecoder;
 const url = require('url');
@@ -72,8 +74,8 @@ const server = http.createServer((req, res) => {
   });
 });
 
-// Start the server on port 3000
-server.listen(3000, () => (console.log('Listening on port 3000.')));
+// Start the server
+server.listen(config.port, () => (console.log(`Listening on port ${config.port} in ${config.envName} mode.`)));
 
 // Handlers
 const handlers = {
