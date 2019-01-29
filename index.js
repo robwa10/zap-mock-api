@@ -2,11 +2,13 @@
  * Primary file for the API
  *
  */
- 'use strict';
+'use strict';
 
 // Dependencies
-const config = require('./config');
+const config = require('./lib/config');
 const fs = require('fs');
+const handlers = require('./lib/handlers');
+const helpers = require('./lib/helpers');
 const http = require('http');
 const https = require('https');
 const StringDecoder = require('string_decoder').StringDecoder;
@@ -14,7 +16,6 @@ const url = require('url');
 
 // Unified server logic
 const unifiedServer = (req, res) => {
-
   // Get the url and parse it
   const parsedUrl = url.parse(req.url, true);
 
@@ -38,11 +39,13 @@ const unifiedServer = (req, res) => {
     buffer += decoder.write(data);
   });
   req.on('end', () => {
-
     buffer += decoder.end();
 
     // Choose the handler. Default to notFound
-    const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
+    const chosenHandler =
+      typeof router[trimmedPath] !== 'undefined'
+        ? router[trimmedPath]
+        : handlers.notFound;
 
     // Construct the data object to send to the handler
     const data = {
@@ -50,19 +53,19 @@ const unifiedServer = (req, res) => {
       queryStringObject,
       method,
       headers,
-      'payload': buffer
+      payload: helpers.parseJsonToObject(buffer)
     };
 
     // Route the request to correct handler
     chosenHandler(data, (statusCode, payload) => {
       // Use the handler status code or default to 200
-      statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
+      statusCode = typeof statusCode === 'number' ? statusCode : 200;
 
       // Use the handler payload or an empty object
-      payload = typeof(payload) === 'object' ? payload : {};
+      payload = typeof payload === 'object' ? payload : {};
 
       // Convert the payload to a string
-      const payloadString = JSON.stringify(payload)
+      const payloadString = JSON.stringify(payload);
 
       // Return the response
       res.setHeader('Content-Type', 'application/json');
@@ -71,7 +74,6 @@ const unifiedServer = (req, res) => {
 
       // Log the request path
       console.log('Returning this response:', statusCode, payload);
-
     });
   });
 };
@@ -82,27 +84,26 @@ const httpServer = http.createServer((req, res) => {
 });
 
 // Start the HTTP server
-httpServer.listen(config.httpPort, () => (console.log(`Listening on port ${config.httpPort}.`)));
+httpServer.listen(config.httpPort, () =>
+  console.log(`Listening on port ${config.httpPort}.`)
+);
 
 // Instantiate the HTTPS server
 const httpsServerOptions = {
-  'key': fs.readFileSync('./https/key.pem'),
-  'cert': fs.readFileSync('./https/cert.pem'),
+  key: fs.readFileSync('./https/key.pem'),
+  cert: fs.readFileSync('./https/cert.pem')
 };
 const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
   unifiedServer(req, res);
 });
 
 // Start the HTTPS server
-httpsServer.listen(config.httpsPort, () => (console.log(`Listening on port ${config.httpsPort}.`)));
-
-// Handlers
-const handlers = {
-  'ping': (data, callback) => (callback(200)),
-  'notFound': (data, callback) => (callback(404))
-};
+httpsServer.listen(config.httpsPort, () =>
+  console.log(`Listening on port ${config.httpsPort}.`)
+);
 
 // Define a request router
 const router = {
-  'ping': handlers.ping
+  'ping': handlers.ping,
+  'users': handlers.users
 };
