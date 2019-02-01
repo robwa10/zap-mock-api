@@ -105,5 +105,6 @@ httpsServer.listen(config.httpsPort, () =>
 // Define a request router
 const router = {
   'ping': handlers.ping,
+  'tokens': handlers.tokens,
   'users': handlers.users
 };
