@@ -1,13 +1,13 @@
+'use strict';
+
 /*
  * Primary file for the API
  *
  */
 
-'use strict';
-
 // Dependencies
 const server = require('./lib/server');
-const workers = require('./lib/server');
+const workers = require('./lib/workers');
 
 const App = {
   init: () => {
