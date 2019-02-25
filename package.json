@@ -1,0 +1,20 @@
+{
+  "name": "zap-mock-api",
+  "version": "1.0.0",
+  "description": "A mock API for testing Zapier CLI principles.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "zapier",
+    "cli",
+    "node.js",
+    "javascript"
+  ],
+  "author": "Robert Hubbard",
+  "license": "ISC"
+}
