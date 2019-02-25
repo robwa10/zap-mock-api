@@ -16,5 +16,8 @@
     "javascript"
   ],
   "author": "Robert Hubbard",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "8.15.0"
+  }
 }
